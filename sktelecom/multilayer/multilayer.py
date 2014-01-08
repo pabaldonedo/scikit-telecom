@@ -2,6 +2,29 @@ import numpy as np
 
 
 def brewster(n1, n2):
+    """
+    Calculates Brewster and critical angles. It deals with both isotropic and birefringent cases.
+
+    In birefringent (uniaxial or biaxial) case, n1 and n2 are turned into 3-d arrays. thc_te is critical or maximum
+    depending on n1[1]>n2[2] or n1[1])<n2[1] whereas thc_tm depends on n1[2]>n2[2] or n1[2]<n2[2]
+
+    Parameters
+    ---------
+    n1 : int of float or ndarray
+        refractive index of left media
+    n2 : int of float or ndarray
+        refractive index of right media
+
+    Returns
+    -------
+    thb : float
+        Brewster angle (in degrees)
+    thc_te : float
+        critical angle of reflection or maximum angle of refraction for TE in degrees
+    thc_tm : float
+        critical angle of reflection or maximum angle of refraction for TM in degrees
+
+    """
 
     # if n1 and n2 are int or float number convert them to numpy arrays
     if isinstance(n1, int) or isinstance(n1, float):
