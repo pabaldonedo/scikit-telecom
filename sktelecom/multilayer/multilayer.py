@@ -54,6 +54,36 @@ def brewster(n1, n2):
 
 
 def fresnel(n1, n2, theta):
+    """
+    Calculates Fresnel reflection coefficients for isotropic or birefringent media.
+
+    It admits n1 and n2 indexes as 1d, 2d or 3d arrays according to cases: isotropic, birefringent uniaxial
+    and birefringent biaxial.
+
+    The function assumes that the interface is the x-y plane and that the plane of  incidence is the x-z plane,
+    with the x,y,z axes being the diagonal optical axes where x,y are ordinary axes and z, extraordinary.
+
+    TE or s-polarization has E = [0,Ey,0], and ordinary indices n1(1) or n2(1) on either side.
+
+    TM or p-polarization has E = [Ex,0,Ez], and theta-dependent refractive index.
+
+    Parameters
+    ---------
+    n1 : int or float or ndarray
+        refractive index of left media
+    n2 : int or float or ndarray
+        refractive index of right media
+    theta : int or float or ndarray
+        array of incident angles from medium a (in degrees) at which to evaluate rho's
+
+    Returns
+    -------
+    rte : float or ndarray
+        reflection coefficients for TE
+    rtm : float or ndarray
+        reflection coefficients for TM
+
+    """
     na, nb = __setup_medium_indexes(n1, n2)
     theta = np.deg2rad(theta)
 
