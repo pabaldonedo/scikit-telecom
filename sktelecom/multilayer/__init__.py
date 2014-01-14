@@ -1,1 +1,1 @@
-from .multilayer import brewster, fresnel
+from .multilayer import brewster, fresnel, snel
