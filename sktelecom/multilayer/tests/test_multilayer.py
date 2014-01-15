@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal, assert_approx_equal
 from sktelecom import multilayer
 
 
@@ -85,3 +85,12 @@ def test_fresnel_birefringent_biaxial_mediums_0_to_90deg():
 
     assert_array_almost_equal(rte, rte_test, decimal=4)
     assert_array_almost_equal(rtm, rtm_test, decimal=4)
+
+
+def test_snel_air2glass():
+    n1 = 1
+    n2 = 1.5
+    th1 = 30
+
+    th2_test = multilayer.snel(n1, n2, th1)
+    assert_approx_equal(th2_test, 19.4712, significant=4)
