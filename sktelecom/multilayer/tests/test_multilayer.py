@@ -94,3 +94,28 @@ def test_snel_air2glass():
 
     th2_test = multilayer.snel(n1, n2, th1)
     assert_approx_equal(th2_test, 19.4712, significant=4)
+
+
+def test_snel_air2glass_0_to_90():
+    n1 = 1
+    n2 = 1.5
+    th1 = np.arange(100, step=10, dtype=np.int)
+
+    th2_test = multilayer.snel(n1, n2, th1)
+    th2 = np.array([0, 6.6478, 13.1801, 19.4712, 25.3740, 30.7102, 35.2644, 38.7896, 41.0364, 41.8103])
+
+    assert_array_almost_equal(th2, th2_test, decimal=4)
+
+
+def test_snel_birefringent_biaxial_mediums_0_to_90deg():
+    n1 = [1.2, 1.1, 1.3]
+    n2 = [1, 1.5, 1.3]
+    th1 = np.arange(100, step=10, dtype=np.int)
+
+    th2_te_test, th2_tm_test = multilayer.snel(n1, n2, th1)
+    th2_te = np.array([0, 7.3160, 14.5257, 21.5102, 28.1238, 34.1780, 39.4263, 43.5595, 46.2358, 47.1666])
+    th2_tm = np.array([0, 11.9471, 23.5940, 34.7150, 45.1975, 55.0368, 64.3066, 73.1270, 81.6408, 90.0000])
+
+    assert_array_almost_equal(th2_te_test, th2_te, decimal=4)
+    assert_array_almost_equal(th2_tm_test, th2_tm, decimal=4)
+
