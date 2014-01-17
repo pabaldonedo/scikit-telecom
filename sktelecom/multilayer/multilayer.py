@@ -106,12 +106,38 @@ def fresnel(n1, n2, theta):
         return rte, rtm
 
 
+def snel(n1, n2, th1):
+    na, nb = __setup_medium_indexes(n1, n2)
+    th1 = np.deg2rad(th1)
+
+    th2_te = np.rad2deg(np.arcsin(na[1] * np.sin(th1) / nb[1]))
+    th2_tm = None
+
+    if (isinstance(n1, (list, tuple, np.ndarray)) and len(n1) > 1) or \
+            (isinstance(n2, (list, tuple, np.ndarray)) and len(n2) > 1):
+        a = nb[0] ** 2 * nb[2] ** 2 * (na[0] ** 2 - na[2] ** 2) - na[0] ** 2 * na[2] ** 2 * (nb[0] ** 2 - nb[2] ** 2)
+        b = nb[0] ** 2 * nb[2] ** 2 * na[2] ** 2
+
+        th2_tm = np.rad2deg(np.arcsin(na[0] * na[2] * nb[2] * np.sin(th1) / np.sqrt(a * np.sin(th1) ** 2 + b)))
+
+    if isinstance(th1, float) or isinstance(th1, int):
+        if th2_tm is None:
+            return float(th2_te)
+        else:
+            return th2_te, th2_tm
+    else:
+        if th2_tm is None:
+            return th2_te
+        else:
+            return th2_te, th2_tm
+
+
 def __setup_medium_indexes(n1, n2):
     # if n1 and n2 are int or float number convert them to numpy arrays
-    if isinstance(n1, int) or isinstance(n1, float):
+    if isinstance(n1, (int, float)):
         n1 = np.array([n1])
 
-    if isinstance(n2, int) or isinstance(n2, float):
+    if isinstance(n2, (int, float)):
         n2 = np.array([n2])
 
     # check if isotropic or uniaxial case and create na and nb arrays
