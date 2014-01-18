@@ -53,7 +53,7 @@ def brewster(n1, n2):
     return thb, thc_te, thc_tm
 
 
-def fresnel(n1, n2, theta):
+def fresnel(n1, n2, th1):
     """
     Calculates Fresnel reflection coefficients for isotropic or birefringent media.
 
@@ -73,7 +73,7 @@ def fresnel(n1, n2, theta):
         refractive index of left media
     n2 : int or float or ndarray
         refractive index of right media
-    theta : int or float or ndarray
+    th1 : int or float or ndarray
         array of incident angles from medium a (in degrees) at which to evaluate rho's
 
     Returns
@@ -85,22 +85,22 @@ def fresnel(n1, n2, theta):
 
     """
     na, nb = __setup_medium_indexes(n1, n2)
-    theta = np.deg2rad(theta)
+    th1 = np.deg2rad(th1)
 
-    n = 1 / np.sqrt(np.cos(theta) ** 2 / na[0] ** 2 + np.sin(theta) ** 2 / na[2] ** 2)
+    n = 1 / np.sqrt(np.cos(th1) ** 2 / na[0] ** 2 + np.sin(th1) ** 2 / na[2] ** 2)
 
-    xe = (na[1] * np.sin(theta)) ** 2
-    xm = (n * np.sin(theta)) ** 2
+    xe = (na[1] * np.sin(th1)) ** 2
+    xm = (n * np.sin(th1)) ** 2
 
-    rte = (na[1] * np.cos(theta) - np.sqrt(nb[1] ** 2 - xe)) / (na[1] * np.cos(theta) + np.sqrt(nb[1] ** 2 - xe))
+    rte = (na[1] * np.cos(th1) - np.sqrt(nb[1] ** 2 - xe)) / (na[1] * np.cos(th1) + np.sqrt(nb[1] ** 2 - xe))
 
     if na[2] == nb[2]:
-        rtm = (na[0] - nb[0]) / (na[0] + nb[0] * np.ones(shape=theta.shape))
+        rtm = (na[0] - nb[0]) / (na[0] + nb[0] * np.ones(shape=th1.shape))
     else:
         rtm = (na[0] * na[2] * np.sqrt(nb[2] ** 2 - xm) - nb[0] * nb[2] * np.sqrt(na[2] ** 2 - xm)) / (
             na[0] * na[2] * np.sqrt(nb[2] ** 2 - xm) + nb[0] * nb[2] * np.sqrt(na[2] ** 2 - xm))
 
-    if isinstance(theta, int) or isinstance(theta, float):
+    if isinstance(th1, (int, float)):
         return float(rte), float(rtm)
     else:
         return rte, rtm
