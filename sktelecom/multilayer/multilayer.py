@@ -107,6 +107,27 @@ def fresnel(n1, n2, th1):
 
 
 def snel(n1, n2, th1):
+    """
+    Calculates refraction angles using Snel's law for birefringent media
+
+    Both media angles are given in degrees.
+
+    Parameters
+    ---------
+    n1 : int or float or ndarray
+        refractive index of left media
+    n2 : int or float or ndarray
+        refractive index of right media
+    th1 : int or float or ndarray
+        array of incident angles from medium a (in degrees) at which to evaluate rho's
+
+    Returns
+    -------
+    th2_te : float or ndarray
+        angle of refraction in second media for component TE
+    th2_tm : float or ndarray
+        angle of refraction in second media for component TM
+    """
     na, nb = __setup_medium_indexes(n1, n2)
     th1 = np.deg2rad(th1)
 
