@@ -119,3 +119,20 @@ def test_snel_birefringent_biaxial_mediums_0_to_90deg():
     assert_array_almost_equal(th2_te_test, th2_te, decimal=4)
     assert_array_almost_equal(th2_tm_test, th2_tm, decimal=4)
 
+
+def test_reflection_isotropic_3layers():
+    n = [1, 1.2, 1.4, 1.3, 1.5, 1.2]
+    lengths = [0.5, 0.3, 0.6, 0.8]
+    theta = 30
+    z = np.linspace(0, 1, 11)
+
+    reflection = np.array(
+        [np.nan + np.nan * 1j, -0.137816332463059 + 0.107008569516682j, -0.225526159874376 - 0.167055607818688j,
+         -0.194446662594797 + 0.0834325706719984j, -0.0147172622100718 + 0.0326501189942636j,
+         -0.0998094771049842 - 0.111581468216867j, 0.00168962035234530 + 0.176254253975789j,
+         0.0466197225764525 + 0.0995766214269103j, -0.0676732258765700 + 0.106717670487398j,
+         -0.392192618389167 + 0.00679432003501674j, -0.0570194530030898 - 0.163688238485510j])
+    reflection_test = multilayer.reflection(n, lengths, theta)
+    reflection_test = reflection_test(z)
+
+    assert_array_almost_equal(reflection, reflection_test, decimal=4)
