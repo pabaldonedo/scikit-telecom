@@ -120,7 +120,7 @@ def test_snel_birefringent_biaxial_mediums_0_to_90deg():
     assert_array_almost_equal(th2_tm_test, th2_tm, decimal=4)
 
 
-def test_reflection_isotropic_3layers():
+def test_reflection_isotropic_4layers():
     n = [1, 1.2, 1.4, 1.3, 1.5, 1.2]
     lengths = [0.5, 0.3, 0.6, 0.8]
     theta = 30
@@ -132,6 +132,25 @@ def test_reflection_isotropic_3layers():
          -0.0998094771049842 - 0.111581468216867j, 0.00168962035234530 + 0.176254253975789j,
          0.0466197225764525 + 0.0995766214269103j, -0.0676732258765700 + 0.106717670487398j,
          -0.392192618389167 + 0.00679432003501674j, -0.0570194530030898 - 0.163688238485510j])
+    reflection_test = multilayer.reflection(n, lengths, theta)
+    reflection_test = reflection_test(z)
+
+    assert_array_almost_equal(reflection, reflection_test, decimal=4)
+
+
+def test_reflection_isotropic2layers():
+    n = [1, 1.3, 1.8, 1.1]
+    lengths = [0.8, 0.9]
+    theta = 45
+    z = np.linspace(0, 1, 11)
+
+    reflection = np.array(
+        [np.nan + np.nan * 1j, 0.283967663684886 + 0.160980378136825j, 0.142682828393841 - 0.222765981593735j,
+         0.314052483101709 + 0.0555014309254255j, -0.399481181649957 + 0.147296497491893j,
+         0.176129918046768 - 0.225077241815512j, 0.0736142292048855 + 0.252133690555673j,
+         -0.469380508365036 - 0.332732330376140j, -0.126523702797059 + 0.145501839323489j,
+         -0.167219815623956 - 0.273581598402077j, 0.208105560485227 + 0.219451639549374j])
+
     reflection_test = multilayer.reflection(n, lengths, theta)
     reflection_test = reflection_test(z)
 
