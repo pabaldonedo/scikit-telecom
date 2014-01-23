@@ -124,34 +124,49 @@ def test_reflection_isotropic_4layers():
     n = [1, 1.2, 1.4, 1.3, 1.5, 1.2]
     lengths = [0.5, 0.3, 0.6, 0.8]
     theta = 30
-    z = np.linspace(0, 1, 11)
+    x = np.linspace(0, 1, 11)
 
-    reflection = np.array(
+    gamma = np.array(
         [np.nan + np.nan * 1j, -0.137816332463059 + 0.107008569516682j, -0.225526159874376 - 0.167055607818688j,
          -0.194446662594797 + 0.0834325706719984j, -0.0147172622100718 + 0.0326501189942636j,
          -0.0998094771049842 - 0.111581468216867j, 0.00168962035234530 + 0.176254253975789j,
          0.0466197225764525 + 0.0995766214269103j, -0.0676732258765700 + 0.106717670487398j,
          -0.392192618389167 + 0.00679432003501674j, -0.0570194530030898 - 0.163688238485510j])
-    reflection_test = multilayer.reflection(n, lengths, theta)
-    reflection_test = reflection_test(z)
 
-    assert_array_almost_equal(reflection, reflection_test, decimal=4)
+    z = np.array([np.nan + np.nan * 1j, 0.742342100088068 + 0.163862594005407j, 0.602181435778377 - 0.218398759939331j,
+                  0.666285558588159 + 0.116390703729396j, 0.968953868190505 + 0.0633541780403127j,
+                  0.799969392148472 - 0.182616381930101j, 0.942825521196948 + 0.343010820907773j,
+                  1.07516099671971 + 0.216741971554807j, 0.854702546797630 + 0.185384001812714j,
+                  0.436548606872172 + 0.00701079064205943j, 0.847800488033844 - 0.286147247432013j])
+
+    reflection_test = multilayer.reflection(n, lengths, theta)
+    gamma_test, z_test = reflection_test(x)
+
+    assert_array_almost_equal(gamma, gamma_test, decimal=2)
+    assert_array_almost_equal(z, z_test, decimal=2)
 
 
 def test_reflection_isotropic2layers():
     n = [1, 1.3, 1.8, 1.1]
     lengths = [0.8, 0.9]
     theta = 45
-    z = np.linspace(0, 1, 11)
+    x = np.linspace(0, 1, 11)
 
-    reflection = np.array(
+    gamma = np.array(
         [np.nan + np.nan * 1j, 0.283967663684886 + 0.160980378136825j, 0.142682828393841 - 0.222765981593735j,
          0.314052483101709 + 0.0555014309254255j, -0.399481181649957 + 0.147296497491893j,
          0.176129918046768 - 0.225077241815512j, 0.0736142292048855 + 0.252133690555673j,
          -0.469380508365036 - 0.332732330376140j, -0.126523702797059 + 0.145501839323489j,
          -0.167219815623956 - 0.273581598402077j, 0.208105560485227 + 0.219451639549374j])
 
-    reflection_test = multilayer.reflection(n, lengths, theta)
-    reflection_test = reflection_test(z)
+    z = np.array([np.nan + np.nan * 1j, 1.65878110498675 + 0.597754550955714j, 1.18531262473555 - 0.567833385427666j,
+                  1.89671088353181 + 0.234378862890625j, 0.413443290399082 + 0.148766020443193j,
+                  1.25896791457287 - 0.617138889612772j, 1.01003247384705 + 0.547068966023542j,
+                  0.294728221313601 - 0.293183376143170j, 0.746241852491948 + 0.225544656371076j,
+                  0.624241623521170 - 0.380701744098275j, 1.34546496212529 + 0.649980737027770j])
 
-    assert_array_almost_equal(reflection, reflection_test, decimal=4)
+    reflection_test = multilayer.reflection(n, lengths, theta)
+    gamma_test, z_test = reflection_test(x)
+
+    assert_array_almost_equal(gamma, gamma_test, decimal=2)
+    assert_array_almost_equal(z, z_test, decimal=2)
