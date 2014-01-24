@@ -153,6 +153,51 @@ def snel(n1, n2, th1):
             return th2_te, th2_tm
 
 
+def reflection(refractive_indices, layers_len, theta):
+    if isinstance(layers_len, (list, tuple)):
+        layers_len = np.array(layers_len)
+
+    # number of layers
+    m = len(layers_len)
+
+    # build general refractive indices matrix, valid for isotropic and birefringence
+    n = np.ones(shape=(3, m + 2))
+    for i, ni in enumerate(refractive_indices):
+        if isinstance(ni, (int, float)):
+            n[:, i] = [ni, ni, ni]
+        elif len(ni) == 2:
+            n[:, i] = [ni[0]] + list(ni)
+        else:
+            n[:, i] = ni
+
+    na = (n[1, 0] * np.sin(np.deg2rad(theta))) ** 2
+    c = np.conj(np.sqrt(1 - na / n[1, :] ** 2))
+    nt = n[1, :] * c
+    r = refractive_index_to_reflection_coeff(nt)
+
+    if m > 0:
+        layers_len = layers_len * c[1:m + 1]
+
+    # function to be returned for evaluation
+    def f(x):
+        gamma = r[m] * np.ones(shape=(1, 11))
+        for k in range(m - 1, -1, -1):
+            delta = 2 * np.pi * layers_len[k] / x
+            z = np.exp(-2j * delta)
+            gamma = (r[k] + gamma * z) / (1 + r[k] * gamma * z)
+
+        gamma = gamma.flatten()
+        z = (1 + gamma) / (1 - gamma)
+
+        return gamma, z
+
+    return f
+
+
+def refractive_index_to_reflection_coeff(n):
+    return -np.diff(n) / (2 * n.flatten(order='f')[:-1] + np.diff(n))
+
+
 def __setup_medium_indexes(n1, n2):
     # if n1 and n2 are int or float number convert them to numpy arrays
     if isinstance(n1, (int, float)):
