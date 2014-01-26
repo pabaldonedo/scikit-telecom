@@ -1,5 +1,8 @@
+import warnings
+
 import numpy as np
 
+warnings.filterwarnings("ignore")
 
 def brewster(n1, n2):
     """
@@ -160,38 +163,67 @@ def reflection(refractive_indices, layers_len, theta):
     # number of layers
     m = len(layers_len)
 
+    # theta to radians
+    theta = np.deg2rad(theta)
+
     # build general refractive indices matrix, valid for isotropic and birefringence
+    is_birefringence = False  # flag for knowing if we have to calculate TM
     n = np.ones(shape=(3, m + 2))
     for i, ni in enumerate(refractive_indices):
         if isinstance(ni, (int, float)):
             n[:, i] = [ni, ni, ni]
         elif len(ni) == 2:
             n[:, i] = [ni[0]] + list(ni)
+            is_birefringence = True
         else:
             n[:, i] = ni
+            is_birefringence = True
 
-    na = (n[1, 0] * np.sin(np.deg2rad(theta))) ** 2
-    c = np.conj(np.sqrt(1 - na / n[1, :] ** 2))
-    nt = n[1, :] * c
-    r = refractive_index_to_reflection_coeff(nt)
+    if is_birefringence:  # we have to calculate TM component
+        na = (n[0, 0] * n[2, 0] * np.sin(theta)) ** 2 / ((n[2, 0] * np.cos(theta)) ** 2 + (n[0, 0] * np.sin(theta)) ** 2)
+        c_tm = np.conj(np.sqrt(np.conj(1 - na / n[2, :] ** 2)))
+        nt = c_tm / n[0, :]
+        r_tm = -refractive_index_to_reflection_coeff(nt)
+
+    na = (n[1, 0] * np.sin(theta)) ** 2
+    c_te = np.conj(np.sqrt(np.conj(1 - na / n[1, :] ** 2)))
+    nt = n[1, :] * c_te
+    r_te = refractive_index_to_reflection_coeff(nt)
 
     if m > 0:
-        layers_len = layers_len * c[1:m + 1]
+        layers_len_te = layers_len * c_te[1:m + 1]
+        if is_birefringence:
+            layers_len_tm = layers_len * c_tm[1:m + 1]
 
     # function to be returned for evaluation
-    def f(x):
+    def f(x, r, pol='te'):
         gamma = r[m] * np.ones(shape=(1, 11))
         for k in range(m - 1, -1, -1):
-            delta = 2 * np.pi * layers_len[k] / x
+            if pol == 'te':
+                delta = 2 * np.pi * layers_len_te[k] / x
+            else:
+                delta = 2 * np.pi * layers_len_tm[k] / x
             z = np.exp(-2j * delta)
             gamma = (r[k] + gamma * z) / (1 + r[k] * gamma * z)
-
         gamma = gamma.flatten()
         z = (1 + gamma) / (1 - gamma)
 
         return gamma, z
 
-    return f
+    # if birefringence media return gamma and z for TE and TM
+    def f_birefringence(x):
+        g_te, z_te = f(x, r_te)
+        g_tm, z_tm = f(x, r_tm, 'tm')
+        return g_te, g_tm, z_te, z_tm
+
+    # isotropic media TE and TM are equal, only returning TE
+    def f_isotropic(x):
+        return f(x, r_te)
+
+    if is_birefringence:
+        return f_birefringence
+    else:
+        return f_isotropic
 
 
 def refractive_index_to_reflection_coeff(n):
