@@ -1,8 +1,5 @@
-import warnings
-
 import numpy as np
 
-warnings.filterwarnings("ignore")
 
 def brewster(n1, n2):
     """
