@@ -153,7 +153,7 @@ def snel(n1, n2, th1):
             return th2_te, th2_tm
 
 
-def reflection(refractive_indices, layers_len, theta):
+def reflection(refractive_indices, layers_len, theta=0):
     if isinstance(layers_len, (list, tuple)):
         layers_len = np.array(layers_len)
 
