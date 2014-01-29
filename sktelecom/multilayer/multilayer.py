@@ -154,6 +154,24 @@ def snel(n1, n2, th1):
 
 
 def reflection(refractive_indices, layers_len, theta=0):
+    """
+    Calculates the reflection response and the wave impedance in a isotropic or birefringent multilayer structure. It
+    will return a function for later evaluation. 
+
+    Parameters
+    ---------
+    refractive_indices : list or ndarray
+        refractive indices of each layer.
+    layers_len : list or ndarray
+        length in lambdas of each layer
+    theta : int or float
+        incidence angle
+
+    Returns
+    -------
+    reflection : function
+        the returned function have to be evaluated in order to get reflection response and transverse wave impedance.
+    """
     if isinstance(layers_len, (list, tuple)):
         layers_len = np.array(layers_len)
 
