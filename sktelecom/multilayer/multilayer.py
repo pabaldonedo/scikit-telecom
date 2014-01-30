@@ -156,7 +156,7 @@ def snel(n1, n2, th1):
 def reflection(refractive_indices, layers_len, theta=0):
     """
     Calculates the reflection response and the wave impedance in a isotropic or birefringent multilayer structure. It
-    will return a function for later evaluation. 
+    will return a function for later evaluation.
 
     Parameters
     ---------
@@ -195,7 +195,8 @@ def reflection(refractive_indices, layers_len, theta=0):
             is_birefringence = True
 
     if is_birefringence:  # we have to calculate TM component
-        na = (n[0, 0] * n[2, 0] * np.sin(theta)) ** 2 / ((n[2, 0] * np.cos(theta)) ** 2 + (n[0, 0] * np.sin(theta)) ** 2)
+        na = (n[0, 0] * n[2, 0] * np.sin(theta)) ** 2 / (
+             (n[2, 0] * np.cos(theta)) ** 2 + (n[0, 0] * np.sin(theta)) ** 2)
         c_tm = np.conj(np.sqrt(np.conj(1 - na / n[2, :] ** 2)))
         nt = c_tm / n[0, :]
         r_tm = -refractive_index_to_reflection_coeff(nt)
