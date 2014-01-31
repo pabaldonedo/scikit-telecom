@@ -243,6 +243,19 @@ def reflection(refractive_indices, layers_len, theta=0):
 
 
 def refractive_index_to_reflection_coeff(n):
+    """
+    Converts refractive indices to reflection coefficients of M-layer structure.
+
+    Parameters
+    ---------
+    n : list or ndarray
+        refractive indices of each layer.
+
+    Returns
+    -------
+    c : ndarray
+        reflection coefficients of each layer.
+    """
     return -np.diff(n) / (2 * n.flatten(order='f')[:-1] + np.diff(n))
 
 
