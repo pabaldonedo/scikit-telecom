@@ -214,3 +214,11 @@ def test_reflection_birefringent2layers():
 
     assert_array_almost_equal(gamma_tm, gamma_tm_test, decimal=2)
     assert_array_almost_equal(z_tm, z_tm_test, decimal=2)
+
+
+def test_refractive_index_to_reflection_coeff():
+    n = np.arange(1, 2, 0.1)
+    c_test = multilayer.refractive_index_to_reflection_coeff(n)
+    c = np.array([-0.0476, -0.0435, -0.0400, -0.0370, -0.0345, -0.0323, -0.0303, -0.0286, -0.0270])
+
+    assert_array_almost_equal(c, c_test, decimal=2)
