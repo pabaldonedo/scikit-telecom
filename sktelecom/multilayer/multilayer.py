@@ -1,6 +1,21 @@
 import numpy as np
 
 
+class MultiLayer(object):
+    def __init__(self):
+        self.layers = list()
+
+    def add_layer(self, layer):
+        if isinstance(layer, Layer):
+            self.layers.append(layer)
+
+
+class Layer(object):
+    def __init__(self, eps_r, mu_r):
+        self.eps_r = eps_r
+        self.mu_r = mu_r
+
+
 def brewster(n1, n2):
     """
     Calculates Brewster and critical angles. It deals with both isotropic and birefringent cases.
