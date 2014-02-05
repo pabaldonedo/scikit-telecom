@@ -11,9 +11,10 @@ class MultiLayer(object):
 
 
 class Layer(object):
-    def __init__(self, eps_r, mu_r):
+    def __init__(self, eps_r, mu_r, length):
         self.eps_r = eps_r
         self.mu_r = mu_r
+        self.length = length
 
 
 def brewster(n1, n2):
