@@ -1,1 +1,1 @@
-__author__ = 'jabaldonedo'
+from .plane_wave import PlaneWave
