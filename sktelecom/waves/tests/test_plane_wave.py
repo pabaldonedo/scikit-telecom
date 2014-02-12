@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_approx_equal
+from numpy.testing import assert_approx_equal, assert_array_almost_equal
 
 from sktelecom import waves
 
@@ -22,3 +22,16 @@ def test_plane_wave_wavelength():
     wave_len = p.wavelength()
 
     assert_approx_equal(wave_len, 2.9411764705882346)
+
+
+def test_plane_decompose_linear():
+    a = np.array([-20j, 5 * np.sqrt(3), 15])
+    k = np.array([0, np.sqrt(3), 1]) * 30j * np.pi
+
+    p = waves.PlaneWave(a, k)
+    al1, al2, u1, u2 = p.decompose_linear()
+
+    assert_array_almost_equal(al1, -20j)
+    assert_array_almost_equal(al2, -8.66025403784+0j)
+    assert_array_almost_equal(u1,  np.array([1, 0, 0]))
+    assert_array_almost_equal(u2, np.array([0, 0.5, -0.8660254]))

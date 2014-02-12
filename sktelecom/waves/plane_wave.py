@@ -28,5 +28,5 @@ class PlaneWave(object):
 
         al1 = np.dot(u1, self.a)
         al2 = np.dot(u2, self.a)
-        
-        return al1, al2
+
+        return al1, al2, u1, u2
