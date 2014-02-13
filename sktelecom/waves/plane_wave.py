@@ -30,3 +30,16 @@ class PlaneWave(object):
         al2 = np.dot(u2, self.a)
 
         return al1, al2, u1, u2
+
+    def decompose_circular(self):
+        al1, al2, u1, u2 = self.decompose_linear()
+
+        v1 = u1 + 1j * u2
+        v2 = u1 - 1j * u2
+        v1 /= np.linalg.norm(v1)
+        v2 /= np.linalg.norm(v2)
+
+        m = np.array([[1, 1j], [1, -1j]])
+        ac = np.dot(np.array([[al1, al2]]), np.linalg.inv(m)).flatten()
+
+        return ac[0], ac[1], v1, v2
