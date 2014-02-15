@@ -3,7 +3,7 @@ import numpy as np
 from sktelecom.constants import LIGHT_SPEED
 
 
-class PlaneWave(object):
+class UniformPlaneWave(object):
     def __init__(self, a, k):
         self.a = a
         self.k = k
