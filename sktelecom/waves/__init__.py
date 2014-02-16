@@ -1,1 +1,1 @@
-from .plane_wave import UniformPlaneWave
+from .plane_wave import UniformPlaneWaveSSS
