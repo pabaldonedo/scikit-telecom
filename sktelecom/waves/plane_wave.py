@@ -4,11 +4,12 @@ from sktelecom.constants import LIGHT_SPEED
 
 
 class UniformPlaneWaveSSS(object):
-    def __init__(self, a, k):
-        self.a = a
-        self.k = k
-        self.beta = np.imag(k)
-        self.alpha = np.real(k)
+    def __init__(self, phasor):
+        self.phasor = phasor
+        self.a = phasor.a
+        self.k = phasor.k
+        self.beta = np.imag(self.k)
+        self.alpha = np.real(self.k)
         self.k_prop = self.beta / np.linalg.norm(self.beta)
 
     def wavelength(self):
@@ -43,3 +44,14 @@ class UniformPlaneWaveSSS(object):
         ac = np.dot(np.array([[al1, al2]]), np.linalg.inv(m)).flatten()
 
         return ac[0], ac[1], v1, v2
+
+
+class Phasor(object):
+    def __init__(self, a, k):
+        self.a = a
+        self.k = k
+
+
+class ElectricalField(UniformPlaneWaveSSS):
+    def __init__(self, phasor):
+        super(ElectricalField, self).__init__(phasor)
