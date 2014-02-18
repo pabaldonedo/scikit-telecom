@@ -7,13 +7,13 @@ class UniformPlaneWaveSSS(object):
     def __init__(self, phasor):
         self.phasor = phasor
         self.a = phasor.a
-        self.k = phasor.k
-        self.beta = np.imag(self.k)
-        self.alpha = np.real(self.k)
+        self.g = phasor.g
+        self.beta = np.imag(self.g)
+        self.alpha = np.real(self.g)
         self.k_prop = self.beta / np.linalg.norm(self.beta)
 
     def wavelength(self):
-        return 2 * np.pi / np.linalg.norm(self.k)
+        return 2 * np.pi / np.linalg.norm(self.beta)
 
     def frequency(self):
         return LIGHT_SPEED / self.wavelength()
@@ -45,11 +45,27 @@ class UniformPlaneWaveSSS(object):
 
         return ac[0], ac[1], v1, v2
 
+    def time_domain(self):
+        alpha = np.linalg.norm(self.alpha)
+        beta = np.linalg.norm(self.beta)
+        omega = 2 * np.pi * self.frequency()
+
+        def f(r, t):
+            ret = np.zeros(shape=(len(r), 3))
+            for i, kr in enumerate(r):
+                ax = np.abs(self.a[0]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[0]))
+                ay = np.abs(self.a[1]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[1]))
+                az = np.abs(self.a[2]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[2]))
+                ret[i, :] = [ax, ay, az] + self.k_prop * kr
+            return ret
+
+        return f
+
 
 class Phasor(object):
-    def __init__(self, a, k):
+    def __init__(self, a, gamma):
         self.a = a
-        self.k = k
+        self.g = gamma
 
 
 class ElectricalField(UniformPlaneWaveSSS):
