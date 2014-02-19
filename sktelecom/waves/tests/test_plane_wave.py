@@ -55,7 +55,29 @@ def test_plane_decompose_circular():
 
 
 def test_electrical_field_uniform_plane_wave_sss():
-    e_field = np.array([-20j, -5 * np.sqrt(3), 15])
-    k = np.array([0, np.sqrt(3), 1]) * -30j*np.pi
-    wave = waves.UniformPlaneWaveSSS(e_field, k)
-    e = waves.ElectricalField(wave)
+    a = (10 + 3j) * np.array([0, 1, 1])
+    gamma = np.array([-1 * np.pi * 1j, 0, 0])
+
+    phasor = waves.Phasor(a, gamma)
+    e = waves.ElectricalField(phasor)
+
+    et = e.time_domain()
+    r = np.linspace(0, 5 * np.pi, 10)
+
+    x = et(r, 0)[:, 0]
+    y = et(r, 0)[:, 1]
+    z = et(r, 0)[:, 2]
+
+    assert_array_almost_equal(x, np.array(
+        [0., -1.74532925, -3.4906585, -5.23598776, -6.98131701, -8.72664626, -10.47197551, -12.21730476, -13.96263402,
+         -15.70796327]))
+    assert_array_almost_equal(y, np.array(
+        [10., 4.81433413, -3.29213784, -9.40130426, -9.80679784, -4.26260989, 3.86765885, 9.65145946, 9.5798207,
+         3.69620505]))
+    assert_array_almost_equal(z, np.array(
+        [10., 4.81433413, -3.29213784, -9.40130426, -9.80679784, -4.26260989, 3.86765885, 9.65145946, 9.5798207,
+         3.69620505]))
+
+
+test_electrical_field_uniform_plane_wave_sss()
+
