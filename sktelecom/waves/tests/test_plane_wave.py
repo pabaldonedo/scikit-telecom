@@ -64,9 +64,7 @@ def test_electrical_field_uniform_plane_wave_sss():
     et = e.time_domain()
     r = np.linspace(0, 5 * np.pi, 10)
 
-    x = et(r, 0)[:, 0]
-    y = et(r, 0)[:, 1]
-    z = et(r, 0)[:, 2]
+    x, y, z = et(r, 0)
 
     assert_array_almost_equal(x, np.array(
         [0., -1.74532925, -3.4906585, -5.23598776, -6.98131701, -8.72664626, -10.47197551, -12.21730476, -13.96263402,
@@ -79,5 +77,19 @@ def test_electrical_field_uniform_plane_wave_sss():
          3.69620505]))
 
 
-test_electrical_field_uniform_plane_wave_sss()
+def test_electrical_field_uniform_plane_wave_sss_time_dependency():
+    a = (10 + 3j) * np.array([0, 1, 1])
+    gamma = np.array([-1.3333333e-8 * np.pi * 1j, 0, 0])
+
+    phasor = waves.Phasor(a, gamma)
+    e = waves.ElectricalField(phasor)
+
+    et = e.time_domain()
+    r = np.linspace(0, e.wavelength(), 100)
+    t = np.linspace(0, 5, 100)
+
+    e.plot(r, t)
+
+
+test_electrical_field_uniform_plane_wave_sss_time_dependency()
 

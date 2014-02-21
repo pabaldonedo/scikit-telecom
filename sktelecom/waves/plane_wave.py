@@ -1,5 +1,12 @@
 import numpy as np
 
+try:
+    from matplotlib import pyplot as plt
+    from matplotlib import animation
+    from mpl_toolkits.mplot3d import Axes3D
+except ImportError:
+    plt = Axes3D = animation = None
+
 from sktelecom.constants import LIGHT_SPEED
 
 
@@ -50,16 +57,60 @@ class UniformPlaneWaveSSS(object):
         beta = np.linalg.norm(self.beta)
         omega = 2 * np.pi * self.frequency()
 
-        def f(r, t):
-            ret = np.zeros(shape=(len(r), 3))
-            for i, kr in enumerate(r):
-                ax = np.abs(self.a[0]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[0]))
-                ay = np.abs(self.a[1]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[1]))
-                az = np.abs(self.a[2]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[2]))
-                ret[i, :] = [ax, ay, az] + self.k_prop * kr
-            return ret
+        def field_eval(kr, t):
+            ax = np.abs(self.a[0]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[0]))
+            ay = np.abs(self.a[1]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[1]))
+            az = np.abs(self.a[2]) * np.exp(-alpha * kr) * np.cos(omega * t - beta * kr + np.angle(self.a[2]))
+            return ax, ay, az
 
+        def f(r, t):
+            if isinstance(t, (int, float)) and isinstance(r, (list, np.ndarray)):
+                ret = np.zeros(shape=(len(r), 3))
+                for i, kr in enumerate(r):
+                    ax, ay, az = field_eval(kr, t)
+                    ret[i, :] = [ax, ay, az] + self.k_prop * kr
+                return ret[:, 0], ret[:, 1], ret[:, 2]
+
+            if isinstance(t, (list, np.ndarray)) and isinstance(r, (list, np.ndarray)):
+                ret = np.zeros(shape=(len(r), 3, len(t)))
+                for i, kr in enumerate(r):
+                    for j, tr in enumerate(t):
+                        ax, ay, az = field_eval(kr, tr)
+
+                        ret[i, :, j] = [ax, ay, az] + self.k_prop * kr
+
+                return ret[:, 0, :], ret[:, 1, :], ret[:, 2, :]
         return f
+
+    def plot(self, r, t, plot_speed=1):
+        if not (plt and Axes3D and animation):
+            # matplotlib is not installed
+            raise ImportError("matplotlib is not installed")
+
+        at = self.time_domain()
+
+        x, y, z = at(r, t)
+
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        ax.set_xlim((np.min(x), np.max(x)))
+        ax.set_ylim((np.min(y), np.max(y)))
+        ax.set_zlim((np.min(z), np.max(z)))
+        line, = ax.plot([], [], [], lw=2)
+
+        def init():
+            line.set_3d_properties([])
+            return line.set_data([], []),
+
+        def animate(i):
+            line.set_data(x[:, i], y[:, i])
+            line.set_3d_properties(z[:, i])
+            return line,
+
+        interval = 1000. / (len(t) / (t[-1] - t[0]))
+
+        anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(t), interval=interval, blit=False)
+        plt.show()
 
 
 class Phasor(object):
