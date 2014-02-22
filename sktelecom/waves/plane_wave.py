@@ -118,6 +118,18 @@ class Phasor(object):
         self.a = a
         self.g = gamma
 
+    @staticmethod
+    def alpha(gamma):
+        return np.real(gamma)
+
+    @staticmethod
+    def beta(gamma):
+        return np.imag(gamma)
+
+    @staticmethod
+    def dir_propagation(beta):
+        return beta / np.linalg.norm(beta)
+
 
 class ElectricalField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
