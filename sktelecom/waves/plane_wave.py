@@ -134,3 +134,20 @@ class Phasor(object):
 class ElectricalField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
         super(ElectricalField, self).__init__(phasor)
+
+
+def is_plane_wave(phasor):
+    if not isinstance(phasor, Phasor):
+        raise TypeError("argument must be a Phasor object")
+
+    beta = Phasor.beta(phasor.g)
+    k_prop = Phasor.dir_propagation(beta)
+
+    # get two vectors from wave
+    wave = UniformPlaneWaveSSS(phasor)
+    _, _, u1, u2 = wave.decompose_linear()
+
+    if np.dot(np.cross(u1, u2), k_prop) == 1.0:
+        return True
+    else:
+        return False

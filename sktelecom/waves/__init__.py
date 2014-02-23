@@ -1,1 +1,1 @@
-from .plane_wave import UniformPlaneWaveSSS, ElectricalField, Phasor
+from .plane_wave import UniformPlaneWaveSSS, ElectricalField, Phasor, is_plane_wave
