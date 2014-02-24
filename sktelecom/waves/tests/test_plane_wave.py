@@ -88,8 +88,20 @@ def test_electrical_field_uniform_plane_wave_sss_time_dependency():
     r = np.linspace(0, e.wavelength(), 100)
     t = np.linspace(0, 5, 100)
 
-    e.plot(r, t)
+
+def test_is_plane_wave_valid():
+    a = np.array([1, -1j, 0])
+    gamma = np.array([0, 0, -np.pi*2j])
+
+    phasor = waves.Phasor(a, gamma)
+    assert waves.is_plane_wave(phasor)
 
 
-test_electrical_field_uniform_plane_wave_sss_time_dependency()
+def test_is_plane_wave_invalid():
+    a = np.array([1, -1j, 2j])
+    gamma = np.array([-2j, 4j, -np.pi*2j])
+
+    phasor = waves.Phasor(a, gamma)
+    assert not waves.is_plane_wave(phasor)
+
 
