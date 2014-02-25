@@ -31,8 +31,7 @@ def test_plane_decompose_linear():
     k = np.array([0, np.sqrt(3), 1]) * 30j * np.pi
     phasor = waves.Phasor(a, k)
 
-    p = waves.UniformPlaneWaveSSS(phasor)
-    al1, al2, u1, u2 = p.decompose_linear()
+    al1, al2, u1, u2 = waves.UniformPlaneWaveSSS.decompose_linear(phasor)
 
     assert_array_almost_equal(al1, -20j)
     assert_array_almost_equal(al2, -8.66025403784 + 0j)
@@ -45,8 +44,7 @@ def test_plane_decompose_circular():
     k = np.array([0, np.sqrt(3), 1]) * 30j * np.pi
     phasor = waves.Phasor(a, k)
 
-    p = waves.UniformPlaneWaveSSS(phasor)
-    ac1, ac2, v1, v2 = p.decompose_circular()
+    ac1, ac2, v1, v2 = waves.UniformPlaneWaveSSS.decompose_circular(phasor)
 
     assert_array_almost_equal(ac1, -5.66987298108j)
     assert_array_almost_equal(ac2, -14.3301270189j)
@@ -94,6 +92,7 @@ def test_is_plane_wave_valid():
     gamma = np.array([0, 0, -np.pi*2j])
 
     phasor = waves.Phasor(a, gamma)
+
     assert waves.is_plane_wave(phasor)
 
 
@@ -103,5 +102,9 @@ def test_is_plane_wave_invalid():
 
     phasor = waves.Phasor(a, gamma)
     assert not waves.is_plane_wave(phasor)
+
+
+def test_uniform_plane_wave_sss_valid_phasor():
+    pass
 
 

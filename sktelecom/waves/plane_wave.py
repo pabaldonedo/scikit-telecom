@@ -25,22 +25,31 @@ class UniformPlaneWaveSSS(object):
     def frequency(self):
         return LIGHT_SPEED / self.wavelength()
 
-    def decompose_linear(self):
-        if self.a[0] != 0:
+    @staticmethod
+    def decompose_linear(phasor):
+        if not isinstance(phasor, Phasor):
+            raise TypeError("argument must be a Phasor object")
+
+        a = phasor.a
+        if a[0] != 0:
             u1 = np.array([1, 0, 0])
-        elif self.a[1] != 0:
+        elif a[1] != 0:
             u1 = np.array([0, 1, 0])
         else:
             u1 = np.array([0, 0, 1])
-        u2 = np.cross(self.k_prop, u1)
+        u2 = np.cross(phasor.k_prop, u1)
 
-        al1 = np.dot(u1, self.a)
-        al2 = np.dot(u2, self.a)
+        al1 = np.dot(u1, a)
+        al2 = np.dot(u2, a)
 
         return al1, al2, u1, u2
 
-    def decompose_circular(self):
-        al1, al2, u1, u2 = self.decompose_linear()
+    @staticmethod
+    def decompose_circular(phasor):
+        if not isinstance(phasor, Phasor):
+            raise TypeError("argument must be a Phasor object")
+
+        al1, al2, u1, u2 = UniformPlaneWaveSSS.decompose_linear(phasor)
 
         v1 = u1 + 1j * u2
         v2 = u1 - 1j * u2
@@ -80,6 +89,7 @@ class UniformPlaneWaveSSS(object):
                         ret[i, :, j] = [ax, ay, az] + self.k_prop * kr
 
                 return ret[:, 0, :], ret[:, 1, :], ret[:, 2, :]
+
         return f
 
     def plot(self, r, t, plot_speed=1):
@@ -117,6 +127,9 @@ class Phasor(object):
     def __init__(self, a, gamma):
         self.a = a
         self.g = gamma
+        self.beta = np.imag(self.g)
+        self.alpha = np.real(self.g)
+        self.k_prop = self.beta / np.linalg.norm(self.beta)
 
     @staticmethod
     def alpha(gamma):
@@ -140,14 +153,10 @@ def is_plane_wave(phasor):
     if not isinstance(phasor, Phasor):
         raise TypeError("argument must be a Phasor object")
 
-    beta = Phasor.beta(phasor.g)
-    k_prop = Phasor.dir_propagation(beta)
-
     # get two vectors from wave
-    wave = UniformPlaneWaveSSS(phasor)
-    _, _, u1, u2 = wave.decompose_linear()
+    _, _, u1, u2 = UniformPlaneWaveSSS.decompose_linear(phasor)
 
-    if np.dot(np.cross(u1, u2), k_prop) == 1.0:
+    if np.dot(np.cross(u1, u2), phasor.k_prop) == 1.0:
         return True
     else:
         return False
