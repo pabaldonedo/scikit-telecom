@@ -12,6 +12,9 @@ from sktelecom.constants import LIGHT_SPEED
 
 class UniformPlaneWaveSSS(object):
     def __init__(self, phasor):
+        if not is_plane_wave(phasor):
+            raise TypeError("phasor is not a wave plane")
+
         self.phasor = phasor
         self.a = phasor.a
         self.g = phasor.g

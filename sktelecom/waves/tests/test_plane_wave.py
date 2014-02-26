@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.testing import assert_approx_equal, assert_array_almost_equal
+from nose.tools import assert_raises
 
 from sktelecom import waves
 
@@ -105,6 +106,12 @@ def test_is_plane_wave_invalid():
 
 
 def test_uniform_plane_wave_sss_valid_phasor():
-    pass
+    a = np.array([1, -1j, 2j])
+    gamma = np.array([-2j, 4j, -np.pi*2j])
+
+    phasor = waves.Phasor(a, gamma)
+
+    assert_raises(TypeError, waves.UniformPlaneWaveSSS, phasor)
+
 
 
