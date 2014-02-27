@@ -152,6 +152,11 @@ class ElectricalField(UniformPlaneWaveSSS):
         super(ElectricalField, self).__init__(phasor)
 
 
+class MagneticField(UniformPlaneWaveSSS):
+    def __init__(self, phasor):
+        super(MagneticField, self).__init__(phasor)
+
+
 def is_plane_wave(phasor):
     if not isinstance(phasor, Phasor):
         raise TypeError("argument must be a Phasor object")
