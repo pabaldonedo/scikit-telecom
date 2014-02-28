@@ -11,7 +11,7 @@ from sktelecom.constants import LIGHT_SPEED
 
 
 class UniformPlaneWaveSSS(object):
-    def __init__(self, phasor):
+    def __init__(self, phasor, eps=1, mu=1):
         if not is_plane_wave(phasor):
             raise TypeError("phasor is not a wave plane")
 
@@ -21,12 +21,14 @@ class UniformPlaneWaveSSS(object):
         self.beta = np.imag(self.g)
         self.alpha = np.real(self.g)
         self.k_prop = self.beta / np.linalg.norm(self.beta)
+        self.n = np.sqrt(eps * mu)
 
     def wavelength(self):
         return 2 * np.pi / np.linalg.norm(self.beta)
 
     def frequency(self):
-        return LIGHT_SPEED / self.wavelength()
+        speed = LIGHT_SPEED / self.n
+        return speed / self.wavelength()
 
     @staticmethod
     def decompose_linear(phasor):
