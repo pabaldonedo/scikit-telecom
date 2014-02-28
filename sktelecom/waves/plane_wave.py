@@ -150,10 +150,24 @@ class ElectricalField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
         super(ElectricalField, self).__init__(phasor)
 
+    @classmethod
+    def from_time_domain(cls, e_mod, e_angle, alpha, beta, k):
+        e = e_mod * np.exp(1j * e_angle)
+        gamma = alpha * k + 1j * beta * k
+
+        return cls(Phasor(e, gamma))
+
 
 class MagneticField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
         super(MagneticField, self).__init__(phasor)
+
+    @classmethod
+    def from_time_domain(cls, h_mod, h_angle, alpha, beta, k):
+        h = h_mod * np.exp(1j * h_angle)
+        gamma = alpha * k + 1j * beta * k
+
+        return cls(Phasor(h, gamma))
 
 
 class ElectromagneticWave(object):
