@@ -101,7 +101,6 @@ class UniformPlaneWaveSSS(object):
             raise ImportError("matplotlib is not installed")
 
         at = self.time_domain()
-
         x, y, z = at(r, t)
 
         fig = plt.figure()
@@ -155,6 +154,16 @@ class ElectricalField(UniformPlaneWaveSSS):
 class MagneticField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
         super(MagneticField, self).__init__(phasor)
+
+
+class ElectromagneticWave(object):
+    @classmethod
+    def from_electric_wave(cls, wave):
+        pass
+
+    @classmethod
+    def from_magnetic_wave(cls, wave):
+        pass
 
 
 def is_plane_wave(phasor):
