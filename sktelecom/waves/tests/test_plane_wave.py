@@ -90,7 +90,7 @@ def test_electrical_field_uniform_plane_wave_sss_time_dependency():
 
 def test_is_plane_wave_valid():
     a = np.array([1, -1j, 0])
-    gamma = np.array([0, 0, -np.pi*2j])
+    gamma = np.array([0, 0, -np.pi * 2j])
 
     phasor = waves.Phasor(a, gamma)
 
@@ -99,7 +99,7 @@ def test_is_plane_wave_valid():
 
 def test_is_plane_wave_invalid():
     a = np.array([1, -1j, 2j])
-    gamma = np.array([-2j, 4j, -np.pi*2j])
+    gamma = np.array([-2j, 4j, -np.pi * 2j])
 
     phasor = waves.Phasor(a, gamma)
     assert not waves.is_plane_wave(phasor)
@@ -107,12 +107,20 @@ def test_is_plane_wave_invalid():
 
 def test_uniform_plane_wave_sss_valid_phasor():
     a = np.array([1, -1j, 2j])
-    gamma = np.array([-2j, 4j, -np.pi*2j])
+    gamma = np.array([-2j, 4j, -np.pi * 2j])
 
     phasor = waves.Phasor(a, gamma)
 
     assert_raises(TypeError, waves.UniformPlaneWaveSSS, phasor)
 
 
+def test_electric_wave_time_domain_dir_prop():
+    # creates an electric wave in the time domain and checks its propagation
 
+    e_mod = np.array([0, 0, 10])
+    e_angle = np.array([0, 0, 0])
+    alpha = 0
+    beta = 1
+    k = np.array([1, 0, 0])
 
+    e = waves.ElectricalField.from_time_domain(e_mod, e_angle, alpha, beta, k)
