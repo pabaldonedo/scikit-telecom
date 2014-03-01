@@ -11,7 +11,7 @@ from sktelecom.constants import LIGHT_SPEED
 
 
 class UniformPlaneWaveSSS(object):
-    def __init__(self, phasor, eps=1, mu=1):
+    def __init__(self, phasor, eps_r=1, mu_r=1):
         if not is_plane_wave(phasor):
             raise TypeError("phasor is not a wave plane")
 
@@ -21,7 +21,7 @@ class UniformPlaneWaveSSS(object):
         self.beta = np.imag(self.g)
         self.alpha = np.real(self.g)
         self.k_prop = self.beta / np.linalg.norm(self.beta)
-        self.n = np.sqrt(eps * mu)
+        self.n = np.sqrt(eps_r * mu_r)
 
     def wavelength(self):
         return 2 * np.pi / np.linalg.norm(self.beta)
@@ -149,27 +149,47 @@ class Phasor(object):
 
 
 class ElectricalField(UniformPlaneWaveSSS):
-    def __init__(self, phasor):
-        super(ElectricalField, self).__init__(phasor)
+    def __init__(self, phasor, eps_r=1, mu_r=1, **kwargs):
+        super(ElectricalField, self).__init__(phasor, eps_r, mu_r)
 
     @classmethod
-    def from_time_domain(cls, e_mod, e_angle, alpha, beta, k):
+    def from_time_domain(cls, e_mod, e_angle, k, **kwargs):
+        if 'beta' in kwargs.keys():
+            beta = kwargs['beta']
+
+        if 'alpha' in kwargs.keys():
+            alpha = kwargs['beta']
+        else:
+            alpha = 0
+
+        if ('freq' or 'omega') and 'eps_r' in kwargs.keys():
+            if 'mu_r' not in kwargs.keys():
+                kwargs['mu_r'] = 1
+
+            if 'freq' in kwargs.keys():
+                omega = 2 * np.pi * kwargs['freq']
+            else:
+                omega = kwargs['omega']
+            beta = np.sqrt(kwargs['eps_r'] * kwargs['mu_r']) * omega / LIGHT_SPEED
+
+            alpha = 0
+
         e = e_mod * np.exp(1j * e_angle)
         gamma = alpha * k + 1j * beta * k
 
-        return cls(Phasor(e, gamma))
+        return cls(Phasor(e, gamma), **kwargs)
 
 
 class MagneticField(UniformPlaneWaveSSS):
     def __init__(self, phasor):
-        super(MagneticField, self).__init__(phasor)
+        super(MagneticField, self).__init__(phasor, eps_r=1, mu_r=1)
 
     @classmethod
-    def from_time_domain(cls, h_mod, h_angle, alpha, beta, k):
+    def from_time_domain(cls, h_mod, h_angle, alpha, beta, k, **kwargs):
         h = h_mod * np.exp(1j * h_angle)
         gamma = alpha * k + 1j * beta * k
 
-        return cls(Phasor(h, gamma))
+        return cls(Phasor(h, gamma, **kwargs))
 
 
 class ElectromagneticWave(object):
