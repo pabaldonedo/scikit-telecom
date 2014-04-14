@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.testing import assert_approx_equal, assert_array_almost_equal
-from nose.tools import assert_raises
+from nose.tools import assert_raises, assert_almost_equal
 
 from sktelecom import waves
 
@@ -119,8 +119,17 @@ def test_electric_wave_time_domain_dir_prop():
 
     e_mod = np.array([0, 0, 10])
     e_angle = np.array([0, 0, 0])
-    alpha = 0
-    beta = 1
-    k = np.array([1, 0, 0])
+    k = np.array([-1, 0, 0])
+    omega = 1.5 * np.pi * 1e6
+    eps_r = 4
 
-    e = waves.ElectricalField.from_time_domain(e_mod, e_angle, alpha, beta, k)
+    e = waves.ElectricalField.from_time_domain(e_mod, e_angle, k, omega=omega, eps_r=eps_r)
+
+    assert_array_almost_equal(e.k_prop, np.array([-1, 0, 0]), decimal=4)
+    assert_almost_equal(e.frequency(), 750000.0)
+    assert_almost_equal(e.wavelength(), 199.862, places=3)
+    assert_almost_equal(np.linalg.norm(e.beta), np.pi / 100, places=4)
+
+    h = e.magnetic_field()
+
+    assert_array_almost_equal(h.a, np.array([0 + 0j, 1 / (6 * np.pi) + 0j, 0 + 0j]), decimal=4)
