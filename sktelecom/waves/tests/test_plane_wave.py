@@ -53,7 +53,7 @@ def test_plane_decompose_circular():
     assert_array_almost_equal(v2, np.array([0.70710678 + 0.j, 0 - 0.35355339j, 0 + 0.61237244j]))
 
 
-def test_electrical_field_uniform_plane_wave_sss():
+def atest_electrical_field_uniform_plane_wave_sss():
     a = (10 + 3j) * np.array([0, 1, 1])
     gamma = np.array([-1 * np.pi * 1j, 0, 0])
 
@@ -133,3 +133,19 @@ def test_electric_wave_time_domain_dir_prop():
     h = e.magnetic_field()
 
     assert_array_almost_equal(h.a, np.array([0 + 0j, 1 / (6 * np.pi) + 0j, 0 + 0j]), decimal=4)
+
+
+def test_magnetic_phasor():
+    h_field = np.array([-1, 0, 1j]) * 2.92e-3
+    gamma = np.array([0, -0.68j * np.pi, 0])
+
+    phasor = waves.Phasor(h_field, gamma)
+
+    h = waves.MagneticField(phasor)
+
+    assert_almost_equal(h.frequency(), 101929435.72)
+    assert_almost_equal(h.wavelength(), 2.9412, places=2)
+
+    e = h.electric_field()
+
+    assert_array_almost_equal(e.a, -0.3504 * np.pi * np.array([1j, 0, 1]), decimal=4)

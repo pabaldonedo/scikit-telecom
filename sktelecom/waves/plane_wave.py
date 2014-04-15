@@ -20,8 +20,10 @@ class UniformPlaneWaveSSS(object):
         self.g = phasor.g
         self.beta = np.imag(self.g)
         self.alpha = np.real(self.g)
+        self.eps_r = eps_r
+        self.mu_r = mu_r
         self.eta = 120 * np.pi * np.sqrt(mu_r / eps_r)
-        self.k_prop = self.beta / np.linalg.norm(self.beta)
+        self.k_prop = - self.beta / np.linalg.norm(self.beta)
         self.n = np.sqrt(eps_r * mu_r)
 
     def wavelength(self):
@@ -176,13 +178,13 @@ class ElectricalField(UniformPlaneWaveSSS):
             alpha = 0
 
         e = e_mod * np.exp(1j * e_angle)
-        gamma = alpha * k + 1j * beta * k
+        gamma = alpha * k - 1j * beta * k
 
         return cls(Phasor(e, gamma), **kwargs)
 
     def magnetic_field(self):
         a = 1 / self.eta * np.cross(self.k_prop, self.a)
-        return MagneticField(Phasor(a, self.g), eps_r=1, mu_r=1)
+        return MagneticField(Phasor(a, self.g), eps_r=self.eps_r, mu_r=self.mu_r)
 
 
 class MagneticField(UniformPlaneWaveSSS):
@@ -192,9 +194,13 @@ class MagneticField(UniformPlaneWaveSSS):
     @classmethod
     def from_time_domain(cls, h_mod, h_angle, alpha, beta, k, **kwargs):
         h = h_mod * np.exp(1j * h_angle)
-        gamma = alpha * k + 1j * beta * k
+        gamma = alpha * k - 1j * beta * k
 
         return cls(Phasor(h, gamma, **kwargs))
+
+    def electric_field(self):
+        a = self.eta * np.cross(self.a, self.k_prop)
+        return ElectricalField(Phasor(a, self.g), eps_r=self.eps_r, mu_r=self.mu_r)
 
 
 class ElectromagneticWave(object):
