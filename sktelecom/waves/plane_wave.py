@@ -151,9 +151,9 @@ class Phasor(object):
         return beta / np.linalg.norm(beta)
 
 
-class ElectricalField(UniformPlaneWaveSSS):
+class ElectricField(UniformPlaneWaveSSS):
     def __init__(self, phasor, eps_r=1, mu_r=1, **kwargs):
-        super(ElectricalField, self).__init__(phasor, eps_r, mu_r)
+        super(ElectricField, self).__init__(phasor, eps_r, mu_r)
 
     @classmethod
     def from_time_domain(cls, e_mod, e_angle, k, **kwargs):
@@ -200,7 +200,7 @@ class MagneticField(UniformPlaneWaveSSS):
 
     def electric_field(self):
         a = self.eta * np.cross(self.a, self.k_prop)
-        return ElectricalField(Phasor(a, self.g), eps_r=self.eps_r, mu_r=self.mu_r)
+        return ElectricField(Phasor(a, self.g), eps_r=self.eps_r, mu_r=self.mu_r)
 
 
 class ElectromagneticWave(object):

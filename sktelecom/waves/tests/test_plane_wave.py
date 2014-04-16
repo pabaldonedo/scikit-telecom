@@ -58,7 +58,7 @@ def atest_electrical_field_uniform_plane_wave_sss():
     gamma = np.array([-1 * np.pi * 1j, 0, 0])
 
     phasor = waves.Phasor(a, gamma)
-    e = waves.ElectricalField(phasor)
+    e = waves.ElectricField(phasor)
 
     et = e.time_domain()
     r = np.linspace(0, 5 * np.pi, 10)
@@ -81,7 +81,7 @@ def test_electrical_field_uniform_plane_wave_sss_time_dependency():
     gamma = np.array([-1.3333333e-8 * np.pi * 1j, 0, 0])
 
     phasor = waves.Phasor(a, gamma)
-    e = waves.ElectricalField(phasor)
+    e = waves.ElectricField(phasor)
 
     et = e.time_domain()
     r = np.linspace(0, e.wavelength(), 100)
@@ -123,7 +123,7 @@ def test_electric_wave_time_domain_dir_prop():
     omega = 1.5 * np.pi * 1e6
     eps_r = 4
 
-    e = waves.ElectricalField.from_time_domain(e_mod, e_angle, k, omega=omega, eps_r=eps_r)
+    e = waves.ElectricField.from_time_domain(e_mod, e_angle, k, omega=omega, eps_r=eps_r)
 
     assert_array_almost_equal(e.k_prop, np.array([-1, 0, 0]), decimal=4)
     assert_almost_equal(e.frequency(), 750000.0)
