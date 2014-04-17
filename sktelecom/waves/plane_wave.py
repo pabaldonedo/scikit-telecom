@@ -39,12 +39,20 @@ class UniformPlaneWaveSSS(object):
             raise TypeError("argument must be a Phasor object")
 
         a = phasor.a
-        if a[0] != 0:
-            u1 = np.array([1, 0, 0])
-        elif a[1] != 0:
-            u1 = np.array([0, 1, 0])
-        else:
-            u1 = np.array([0, 0, 1])
+
+        if np.sum(a == 0) == 2:
+            u1 = np.ones(shape=(3,)) * (a != 0)
+        elif np.sum(a == 0) == 1:
+            u1 = np.ones(shape=(3,)) * (a != 0)
+            u1[np.where(u1 == 1)[0][0]] = 0
+        elif np.sum(a == 0) == 0:
+            if a[0] == np.conj(a[0]) and a[1] == np.conj(a[1]):
+                u1 = np.array([1, 1, 0]) * 1 / np.sqrt(2)
+            elif a[0] == np.conj(a[0]) and a[2] == np.conj(a[2]):
+                u1 = np.array([1, 0, 1]) * 1 / np.sqrt(2)
+            else:
+                u1 = np.array([1, 0, 1]) * 1 / np.sqrt(2)
+
         u2 = np.cross(phasor.k_prop, u1)
 
         al1 = np.dot(u1, a)
@@ -136,7 +144,7 @@ class Phasor(object):
         self.g = gamma
         self.beta = np.imag(self.g)
         self.alpha = np.real(self.g)
-        self.k_prop = self.beta / np.linalg.norm(self.beta)
+        self.k_prop = - self.beta / np.linalg.norm(self.beta)
 
     @staticmethod
     def alpha(gamma):
@@ -217,10 +225,7 @@ def is_plane_wave(phasor):
     if not isinstance(phasor, Phasor):
         raise TypeError("argument must be a Phasor object")
 
-    # get two vectors from wave
-    _, _, u1, u2 = UniformPlaneWaveSSS.decompose_linear(phasor)
-
-    if np.dot(np.cross(u1, u2), phasor.k_prop) == 1.0:
+    if np.dot(phasor.k_prop, phasor.a) < 1e-10:  # dot product should be zero, we will consider also near zero values
         return True
     else:
         return False
