@@ -33,6 +33,20 @@ class UniformPlaneWaveSSS(object):
         speed = LIGHT_SPEED / self.n
         return speed / self.wavelength()
 
+    def axial_ratio(self):
+        al1, al2, u1, u2 = self.decompose_linear(self.phasor)
+
+        p = np.linalg.norm(al2) / np.linalg.norm(al1)
+        delta_phases = np.angle(al2) - np.angle(al1)
+
+        q = np.sqrt(1 - 4 * (np.sin(delta_phases) / (1 / p + p)) ** 2)
+
+        if q == 1:
+            return np.inf
+        else:
+            ar = np.sqrt((1 + q) / (1 - q))
+            return ar
+
     @staticmethod
     def decompose_linear(phasor):
         if not isinstance(phasor, Phasor):
@@ -51,7 +65,7 @@ class UniformPlaneWaveSSS(object):
             elif a[0] == np.conj(a[0]) and a[2] == np.conj(a[2]):
                 u1 = np.array([1, 0, 1]) * 1 / np.sqrt(2)
             else:
-                u1 = np.array([1, 0, 1]) * 1 / np.sqrt(2)
+                u1 = np.array([0, 1, 1]) * 1 / np.sqrt(2)
 
         u2 = np.cross(phasor.k_prop, u1)
 
