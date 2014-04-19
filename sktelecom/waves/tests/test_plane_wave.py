@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.testing import assert_approx_equal, assert_array_almost_equal
+from numpy.testing import assert_approx_equal, assert_array_almost_equal, assert_array_equal, assert_equal
 from nose.tools import assert_raises, assert_almost_equal
 
 from sktelecom import waves
@@ -34,10 +34,10 @@ def test_plane_decompose_linear():
 
     al1, al2, u1, u2 = waves.UniformPlaneWaveSSS.decompose_linear(phasor)
 
-    assert_array_almost_equal(al1, -20j)
-    assert_array_almost_equal(al2, -8.66025403784 + 0j)
-    assert_array_almost_equal(u1, np.array([1, 0, 0]))
-    assert_array_almost_equal(u2, np.array([0, 0.5, -0.8660254]))
+    assert_array_equal(u1, np.array([0, 1 / np.sqrt(2), 1 / np.sqrt(2)]))
+    assert_array_almost_equal(u2, np.array([-0.258819, 0, 0]), decimal=5)
+    assert_array_almost_equal(al1, 16.7303260748+0j)
+    assert_array_almost_equal(al2, 5.17638090205j)
 
 
 def test_plane_decompose_circular():
@@ -46,11 +46,12 @@ def test_plane_decompose_circular():
     phasor = waves.Phasor(a, k)
 
     ac1, ac2, v1, v2 = waves.UniformPlaneWaveSSS.decompose_circular(phasor)
-
-    assert_array_almost_equal(ac1, -5.66987298108j)
-    assert_array_almost_equal(ac2, -14.3301270189j)
-    assert_array_almost_equal(v1, np.array([0.70710678 + 0.j, 0 + 0.35355339j, 0 - 0.61237244j]))
-    assert_array_almost_equal(v2, np.array([0.70710678 + 0.j, 0 - 0.35355339j, 0 + 0.61237244j]))
+    print(v1)
+    print(v2)
+    assert_array_almost_equal(ac1, 10.9533534884+0j)
+    assert_array_almost_equal(ac2, 5.77697258635+0j)
+    assert_array_almost_equal(v1, np.array([0.0-0.25056281j, 0.68455032+0.j, 0.68455032+0.j]))
+    assert_array_almost_equal(v2, np.array([0.0+0.25056281j, 0.68455032+0.j, 0.68455032+0.j]))
 
 
 def atest_electrical_field_uniform_plane_wave_sss():
@@ -149,3 +150,15 @@ def test_magnetic_phasor():
     e = h.electric_field()
 
     assert_array_almost_equal(e.a, -0.3504 * np.pi * np.array([1j, 0, 1]), decimal=4)
+
+
+def test_axial_ratio_inf():
+    a = np.array([-1, -2 * np.sqrt(3), np.sqrt(3)])
+    gamma = np.array([np.sqrt(3), -2, -3]) * -0.04j * np.pi
+
+    phasor = waves.Phasor(a, gamma)
+    e = waves.ElectricField(phasor)
+
+    ar = e.axial_ratio()
+
+    assert_equal(ar, np.inf)
