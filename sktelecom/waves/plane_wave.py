@@ -68,6 +68,7 @@ class UniformPlaneWaveSSS(object):
                 u1 = np.array([0, 1, 1]) * 1 / np.sqrt(2)
 
         u2 = np.cross(phasor.k_prop, u1)
+        u2 /= np.linalg.norm(u2)
 
         al1 = np.dot(u1, a)
         al2 = np.dot(u2, a)

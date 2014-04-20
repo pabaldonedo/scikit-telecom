@@ -36,7 +36,7 @@ def test_plane_decompose_linear():
 
     assert_array_equal(u1, np.array([0, 1 / np.sqrt(2), 1 / np.sqrt(2)]))
     assert_array_almost_equal(u2, np.array([-0.258819, 0, 0]), decimal=5)
-    assert_array_almost_equal(al1, 16.7303260748+0j)
+    assert_array_almost_equal(al1, 16.7303260748 + 0j)
     assert_array_almost_equal(al2, 5.17638090205j)
 
 
@@ -48,10 +48,10 @@ def test_plane_decompose_circular():
     ac1, ac2, v1, v2 = waves.UniformPlaneWaveSSS.decompose_circular(phasor)
     print(v1)
     print(v2)
-    assert_array_almost_equal(ac1, 10.9533534884+0j)
-    assert_array_almost_equal(ac2, 5.77697258635+0j)
-    assert_array_almost_equal(v1, np.array([0.0-0.25056281j, 0.68455032+0.j, 0.68455032+0.j]))
-    assert_array_almost_equal(v2, np.array([0.0+0.25056281j, 0.68455032+0.j, 0.68455032+0.j]))
+    assert_array_almost_equal(ac1, 10.9533534884 + 0j)
+    assert_array_almost_equal(ac2, 5.77697258635 + 0j)
+    assert_array_almost_equal(v1, np.array([0.0 - 0.25056281j, 0.68455032 + 0.j, 0.68455032 + 0.j]))
+    assert_array_almost_equal(v2, np.array([0.0 + 0.25056281j, 0.68455032 + 0.j, 0.68455032 + 0.j]))
 
 
 def atest_electrical_field_uniform_plane_wave_sss():
@@ -162,3 +162,15 @@ def test_axial_ratio_inf():
     ar = e.axial_ratio()
 
     assert_equal(ar, np.inf)
+
+
+def test_axial_ratio_not_inf():
+    a = np.array([2 * np.sqrt(6) - np.sqrt(2) * 1j, -2 * np.sqrt(6) + np.sqrt(2) * 1j, -4 - 2j * np.sqrt(3)])
+    gamma = np.array([1, 1, 0]) * -1j * 0.5 * np.sqrt(2)
+
+    phasor = waves.Phasor(a, gamma)
+    e = waves.ElectricField(phasor)
+
+    ar = e.axial_ratio()
+
+    assert_approx_equal(ar, 1.842463, significant=3)
