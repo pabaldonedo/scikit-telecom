@@ -34,6 +34,10 @@ class UniformPlaneWaveSSS(object):
         return speed / self.wavelength()
 
     def axial_ratio(self):
+        _, _, ar, _, _ = self.polarization()
+        return ar
+
+    def polarization(self):
         al1, al2, u1, u2 = self.decompose_linear(self.phasor)
 
         p = np.linalg.norm(al2) / np.linalg.norm(al1)
@@ -42,10 +46,24 @@ class UniformPlaneWaveSSS(object):
         q = np.sqrt(1 - 4 * (np.sin(delta_phases) / (1 / p + p)) ** 2)
 
         if q == 1:
-            return np.inf
+            return "linear", None, np.inf, p, delta_phases
         else:
+            if 0 < delta_phases < np.pi:
+                rotation = "left"
+            elif -np.pi < delta_phases < 0:
+                rotation = "right"
+            else:
+                rotation = None
+
+            if p == 1:
+                case = "circular"
+            elif p == 0:
+                case = "linear"
+            else:
+                case = "elliptical"
+
             ar = np.sqrt((1 + q) / (1 - q))
-            return ar
+            return case, rotation, ar, p, delta_phases
 
     @staticmethod
     def decompose_linear(phasor):
